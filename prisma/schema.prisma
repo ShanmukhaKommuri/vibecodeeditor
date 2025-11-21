@@ -27,7 +27,7 @@ model User {
   accounts Account[]
   role     UserRole  @default(USER)
 
-  // myPlaground      Playground[]
+  myPlaground Playground[]
   // staredPlayground StarMark[]
   // chatMessages     ChatMessage[]
 
@@ -55,29 +55,29 @@ model Account {
   @@index([userId])
 }
 
-// enum Templates {
-//   REACT
-//   NEXTJS
-//   EXPRESS
-//   VUE
-//   HONO
-//   ANGULAR
-// }
+enum Templates {
+  REACT
+  NEXTJS
+  EXPRESS
+  VUE
+  HONO
+  ANGULAR
+}
 
-// model Playground {
-//   id          String    @id @default(cuid()) @map("_id")
-//   title       String
-//   description String?
-//   template    Templates @default(REACT)
-//   createdAt   DateTime  @default(now())
-//   updatedAt   DateTime  @updatedAt
+model Playground {
+  id          String    @id @default(cuid()) @map("_id")
+  title       String
+  description String?
+  template    Templates @default(REACT)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-//   Starmark StarMark[]
-//   userId   String
-//   user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  //   Starmark StarMark[]
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-//   templateFiles TemplateFile[]
-// }
+  //   templateFiles TemplateFile[]
+}
 
 // model StarMark {
 //   id           String     @id @default(cuid()) @map("_id")
