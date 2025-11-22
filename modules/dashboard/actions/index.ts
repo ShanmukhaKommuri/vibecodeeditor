@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db"
 import { currentuser } from "@/modules/auth/actions"
+// import { prisma } from "@/lib/prisma"; // or however you set it up
 
 export const getAllPlaygroundForUser = async () => {
     const user = await currentuser();

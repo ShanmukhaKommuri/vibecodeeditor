@@ -2,6 +2,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button"
+import TemplateSelectingModal from "./template-selecting-modal";
 // import { createPlayground } from "@/features/playground/actions";
 import { Plus } from 'lucide-react'
 import Image from "next/image"
@@ -48,6 +49,7 @@ const AddNewButton = () => {
             </div>
 
             {/* //   Todo Implement Template Selecting Model here */}
+            <TemplateSelectingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={() => { }} />
         </>
     )
 }
