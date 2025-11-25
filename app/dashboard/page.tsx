@@ -1,6 +1,6 @@
 import React from 'react'
 import EmptyState from '@/modules/dashboard/components/empty-state'
-import { getAllPlaygroundForUser } from '@/modules/dashboard/actions'
+import { duplicateProjectById, editProjectById, deleteProjectById, getAllPlaygroundForUser } from '@/modules/dashboard/actions'
 import AddNewButton from '@/modules/dashboard/components/add-new'
 import AddRepo from '@/modules/dashboard/components/add-repo'
 import { Empty } from '@/components/ui/empty'
@@ -19,10 +19,10 @@ const Dashboard = async () => {
                     {
                         (!playgrounds || playgrounds.length === 0) ?
                             (<EmptyState />) :
-                            <ProjectTable projects={playgrounds || []}
-                            // onDeleteProject={() => { }}
-                            // onUpdateProject={() => { }}
-                            // onDuplicateProject={() => { }}
+                            <ProjectTable projects={playgrounds}
+                                onDeleteProject={deleteProjectById}
+                                onUpdateProject={editProjectById}
+                                onDuplicateProject={duplicateProjectById}
                             />}
                 </div>
 

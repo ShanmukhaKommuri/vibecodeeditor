@@ -20,3 +20,9 @@ export interface Project {
     user: User
     Starmark: { isMarked: boolean }[]
 }
+
+export interface ITemplate {
+    title: string
+    description?: string
+    template: "REACT" | "NEXTJS" | "EXPRESS" | "ANGULAR" | "VUE" | "HONO"
+}

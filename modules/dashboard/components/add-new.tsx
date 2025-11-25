@@ -9,10 +9,23 @@ import Image from "next/image"
 import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { toast } from "sonner";
+import { ITemplate } from "../types";
+import { createPlayground } from "../actions";
 
 const AddNewButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState<ITemplate | null>(null);
 
+    const router = useRouter();
+
+    const handleSubmit = async (data: ITemplate) => {
+        setSelectedTemplate(data);
+        const res = await createPlayground(data);
+        console.log("Created Playground:", res);
+        toast.success("Playground created successfully");
+        setIsModalOpen(false);
+        router.push(`/playground/${res?.id}`)
+    }
     return (
         <>
             <div
@@ -49,7 +62,7 @@ const AddNewButton = () => {
             </div>
 
             {/* //   Todo Implement Template Selecting Model here */}
-            <TemplateSelectingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={() => { }} />
+            <TemplateSelectingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSubmit={handleSubmit} />
         </>
     )
 }
