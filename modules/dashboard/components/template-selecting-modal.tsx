@@ -187,15 +187,11 @@ const TemplateSelectionModal = ({
       };
 
       const template = templates.find((t) => t.id === selectedTemplate);
-
-
-      onSubmit(
-        {
-          title: projectName || `New ${template?.name} Project`,
-          template: templateMap[selectedTemplate] || "REACT",
-          description: template?.description
-        }
-      )
+      onSubmit({
+        title: projectName || `New ${template?.name} Project`,
+        template: templateMap[selectedTemplate] || "REACT",
+        description: template?.description
+      })
       onClose();
       // Reset state for next time
       setStep("select");

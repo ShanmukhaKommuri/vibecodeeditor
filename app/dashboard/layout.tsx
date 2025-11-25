@@ -4,7 +4,7 @@ import { getAllPlaygroundForUser } from '@/modules/dashboard/actions'
 import { DashboardSidebar } from '@/modules/dashboard/components/DashboardSidebar'
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     const playgroundData = await getAllPlaygroundForUser();
-
+    console.log(`playground data : ${playgroundData}`)
     const technologyIconMap: Record<string, string> = {
         REACT: "Zap",
         NEXTJS: "Lightbulb",
@@ -19,7 +19,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         id: item.id,
         name: item.title,
         icon: technologyIconMap[item.template] || "Code2",
-        starred: false,
+        starred: item.Starmark?.[0]?.isMarked || false,
     }))
     return (
         <SidebarProvider>

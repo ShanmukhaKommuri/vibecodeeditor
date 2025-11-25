@@ -29,13 +29,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                                 type: account.type,
                                 provider: account.provider,
                                 providerAccountId: account.providerAccountId,
-                                refresh_token: account.refresh_token,
-                                access_token: account.access_token,
-                                expires_at: account.expires_at,
-                                token_type: account.token_type,
+                                refreshToken: account.refresh_token,
+                                accessToken: account.access_token,
+                                expiresAt: account.expires_at,
+                                tokenType: account.token_type,
                                 scope: account.scope,
-                                id_token: account.id_token,
-                                session_state: account.session_state,
+                                idToken: account.id_token,
+                                sessionState: account.session_state,
                             },
                         },
                     }
@@ -60,14 +60,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             type: account.type,
                             provider: account.provider,
                             providerAccountId: account.providerAccountId,
-                            refresh_token: account.refresh_token,
-                            access_token: account.access_token,
-                            expires_at: account.expires_at,
-                            token_type: account.token_type,
+                            refreshToken: account.refresh_token,
+                            accessToken: account.access_token,
+                            expiresAt: account.expires_at,
+                            tokenType: account.token_type,
                             scope: account.scope,
-                            id_token: account.id_token,
+                            idToken: account.id_token,
                             // @ts-ignore
-                            session_state: account.session_state,
+                            sessionState: account.session_state
                         }
                     });
                 }
