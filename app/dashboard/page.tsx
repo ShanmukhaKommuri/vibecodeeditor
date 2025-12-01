@@ -19,7 +19,7 @@ const Dashboard = async () => {
                     {
                         (!playgrounds || playgrounds.length === 0) ?
                             (<EmptyState />) :
-                            <ProjectTable projects={playgrounds}
+                            <ProjectTable projects={playgrounds || []}
                                 onDeleteProject={deleteProjectById}
                                 onUpdateProject={editProjectById}
                                 onDuplicateProject={duplicateProjectById}
