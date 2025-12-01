@@ -6,21 +6,38 @@ import React from 'react'
 import { Separator } from '@/components/ui/separator';
 import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { TemplateFileTree } from '@/modules/playground/components/file-explorer';
-
+import { useFileExplorer } from '@/modules/playground/hooks/useFileExplorer';
+import { useEffect } from 'react';
+import { TemplateFile } from '@/modules/playground/lib/path-to-json';
 
 const MainPlaygroundPage = () => {
     const { id } = useParams<{ id: string }>();
     const { playgroundData, templateData, isLoading, error, saveTemplateData } = UsePlayground(id);
+    const { activeFileId, closeAllFiles, openFile, openFiles,
+        setTemplateData,
+        setActiveFileId,
+        setPlaygroundId,
+        setOpenFiles,
+    } = useFileExplorer();
+    // console.log("template data ", templateData);
+    // console.log("playground data ", playgroundData);
 
-    console.log("template data ", templateData);
-    console.log("playground data ", playgroundData);
-    const activeFile = "sample.txt"
+    useEffect(() => { setPlaygroundId(id) }, [id, setPlaygroundId]);
+    useEffect(() => {
+        if (templateData && !openFiles.length)
+            setTemplateData(templateData)
+    }, [templateData, setTemplateData, openFiles.length]);
+    const activeFile = openFiles.find((file) => { file.id === activeFileId });
+    const hasUnsavedChanges = openFiles.some((file) => { file.hasUnsavedChanges });
+    const handleFileSelect = (file: TemplateFile) => {
+        openFile(file);
+    }
     return (
         <TooltipProvider>
             <>
                 <TemplateFileTree
                     data={templateData!}
-                    onFileSelect={() => { }}
+                    onFileSelect={handleFileSelect}
                     selectedFile={activeFile}
                     title="File Explorer"
                     onAddFile={() => { }}
