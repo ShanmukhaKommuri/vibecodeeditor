@@ -8,7 +8,7 @@ import { set } from 'zod';
 
 interface PlaygroundData {
     id: string;
-    name?: string;
+    title?: string;
     [key: string]: any;
 }
 
