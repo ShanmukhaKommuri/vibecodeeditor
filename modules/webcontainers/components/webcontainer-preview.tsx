@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { type TemplateItem } from "@/modules/playground/lib/path-to-json";
 import { TemplateFolder } from '@/modules/playground/lib/path-to-json'
 import { WebContainer } from '@webcontainer/api';
+import TerminalComponent from "./terminal";
 
 
 interface WebContainerPreviewProps {
@@ -32,7 +33,7 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
     const [setUpError, setSetUpError] = useState<string | null>(null);
     const [isSetupComplete, setIsSetupComplete] = useState(false);
     const [isSetupInProgress, setIsSetupInProgress] = useState(false);
-
+    const terminalRef = useRef<any>(null);
 
     useEffect(() => {
         async function setupContainer() {
@@ -44,10 +45,15 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                 try {
                     const packageJsonExists = await instance.fs.readFile("package.json", "utf8");
                     if (packageJsonExists) {
-                        // TODO : TERMINAL LOGIC
+                        if (terminalRef.current?.writeToTerminal) {
+                            terminalRef.current.writeToTerminal("🔄 Reconnecting to existing WebContainer session...\r\n")
+                        }
                         instance.on("server-ready", (port: number, url: string) => {
-                            // TODO :TERMINAL LOGIC
-
+                            if (terminalRef.current?.writeToTerminal) {
+                                terminalRef.current.writeToTerminal(
+                                    `🌐 Reconnected to server at ${url}\r\n`
+                                );
+                            }
                             setPreviewUrl(url);
                             setLoadingState((prev) => ({
                                 ...prev,
@@ -66,7 +72,11 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                 // step1 :transforming data
                 setLoadingState((prev) => ({ ...prev, transforming: true }));
                 setCurrentStep(1);
-                // TODO : TERMINAL LOGIC
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(
+                        "🔄 Transforming template data...\r\n"
+                    );
+                }
                 // @ts-ignore
                 const files = transformToWebContainerFormat(templateData);
                 setLoadingState((prev) => ({
@@ -79,9 +89,19 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                 setCurrentStep(2);
                 // step-2
 
-                // TODO : TERMINAL LOGIC
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(
+                        "📁 Mounting files to WebContainer...\r\n"
+                    );
+                }
                 await instance.mount(files);
-                // TODO : TERMINAL LOGIC
+
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(
+                        "✅ Files mounted successfully\r\n"
+                    );
+                }
+
                 setLoadingState((prev) => ({
                     ...prev,
                     mounting: false,
@@ -93,14 +113,20 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                 // step3 
                 // step 3
 
-                // TODO : TERMINAL LOGIC
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(
+                        "📦 Installing dependencies...\r\n"
+                    );
+                }
 
                 const installProcess = await instance.spawn("npm", ["install"]);
 
                 installProcess.output.pipeTo(
                     new WritableStream({
                         write(data) {
-                            // TODO : TERMINAL LOGIC
+                            if (terminalRef.current?.writeToTerminal) {
+                                terminalRef.current.writeToTerminal(data);
+                            }
                         }
                     })
                 )
@@ -109,7 +135,11 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                 if (installExitCode !== 0) {
                     throw new Error(`failed to install dependencies Exit code : ${installExitCode}`);
                 }
-                // TODO :TERMINAL LOGIC
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(
+                        "✅ Dependencies installed successfully\r\n"
+                    );
+                }
 
                 setLoadingState((prev) => ({
                     ...prev,
@@ -120,11 +150,19 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
 
                 // step-4 start the server
 
-                // TODO :TERMINAL LOGIC
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(
+                        "🚀 Starting development server...\r\n"
+                    );
+                }
 
                 const startProcess = await instance.spawn("npm", ["run", "start"])
                 instance.on("server-ready", (port: number, url: string) => {
-                    // TODO : TERMINAL LOGIC
+                    if (terminalRef.current?.writeToTerminal) {
+                        terminalRef.current.writeToTerminal(
+                            `🌐 Server ready at ${url}\r\n`
+                        );
+                    }
                     setPreviewUrl(url);
                     setLoadingState((prev) => ({
                         ...prev,
@@ -138,14 +176,18 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                 startProcess.output.pipeTo(
                     new WritableStream({
                         write(data) {
-                            // todo : terminal logic
+                            if (terminalRef.current?.writeToTerminal) {
+                                terminalRef.current.writeToTerminal(data);
+                            }
                         },
                     })
                 );
             } catch (error) {
                 console.error("error setting up container : ", error);
                 const errorMessage = error instanceof Error ? error.message : String(error);
-                // TODO : TERMINAL LOGIC 
+                if (terminalRef.current?.writeToTerminal) {
+                    terminalRef.current.writeToTerminal(`❌ Error: ${errorMessage}\r\n`);
+                }
                 setSetUpError(errorMessage);
                 setIsSetupInProgress(false);
                 setLoadingState({
@@ -259,12 +301,12 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
 
                     {/* Terminal */}
                     <div className="flex-1 p-4">
-                        {/* <TerminalComponent
+                        <TerminalComponent
                             ref={terminalRef}
                             webContainerInstance={instance}
                             theme="dark"
                             className="h-full"
-                        /> */}
+                        />
                     </div>
                 </div>
             ) : (
@@ -278,12 +320,12 @@ const WebContainerPreview = ({ templateData, serverUrl, isLoading, error, instan
                     </div>
 
                     <div className="h-64 border-t">
-                        {/* <TerminalComponent
+                        <TerminalComponent
                             ref={terminalRef}
                             webContainerInstance={instance}
                             theme="dark"
                             className="h-full"
-                        /> */}
+                        />
                     </div>
                 </div>
             )}
