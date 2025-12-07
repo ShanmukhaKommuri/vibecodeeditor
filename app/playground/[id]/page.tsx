@@ -23,10 +23,11 @@ import LoadingStep from '@/modules/playground/components/loader';
 import { findFilePath } from '@/modules/playground/lib';
 import { toast } from 'sonner';
 import { writeSync } from 'fs';
+import ToggleAI from '@/modules/playground/components/toggle-ai';
 
 const MainPlaygroundPage = () => {
     const { id } = useParams<{ id: string }>();
-    const [isPreviewVisible, setIsPreviewVisible] = useState<boolean>(false);
+    const [isPreviewVisible, setIsPreviewVisible] = useState<boolean>(true);
 
     const { playgroundData, templateData, isLoading, error, saveTemplateData } = UsePlayground(id);
     const { activeFileId, closeAllFiles, openFile, openFiles, closeFile,
@@ -131,6 +132,7 @@ const MainPlaygroundPage = () => {
     });
 
     const hasUnsavedChanges = openFiles.some((file) => file.hasUnsavedChanges);
+
     const handleFileSelect = (file: TemplateFile) => {
         openFile(file);
     }
@@ -330,7 +332,7 @@ const MainPlaygroundPage = () => {
                             </div>
                             <div className="flex items-center gap-1">
                                 <Tooltip>
-                                    <TooltipTrigger>
+                                    <TooltipTrigger asChild>
                                         <Button
                                             size="sm"
                                             variant="outline"
@@ -362,6 +364,11 @@ const MainPlaygroundPage = () => {
                                     onToggle={aiSuggestions.toggleEnabled}
                                     suggestionLoading={aiSuggestions.isLoading}
                                 /> */}
+                                <ToggleAI
+                                    isEnabled={true}
+                                    onToggle={() => { }}
+                                    suggestionLoading={false}
+                                />
 
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>

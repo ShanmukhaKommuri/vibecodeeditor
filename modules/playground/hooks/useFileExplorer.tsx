@@ -91,7 +91,8 @@ export const useFileExplorer = create<FileExplorerState>((set, get) => ({
     openFile: (file) => {
         const fileId = generateFileId(file, get().templateData!)
         const { openFiles } = get();
-        const existingFile = openFiles.find((f) => { f.id == fileId });
+
+        const existingFile = openFiles.find((f) => (f.id == fileId));
 
         if (existingFile) {
             set({
