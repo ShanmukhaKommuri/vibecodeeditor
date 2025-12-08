@@ -45,7 +45,7 @@ export const useAiSuggestions = (): UseAiSuggestionsReturn => {
                 return currentState;
             }
 
-            const model = editor.Model();
+            const model = editor.getModel();
 
             const cursorPosition = editor.getPosition();
             console.log(cursorPosition);
@@ -65,7 +65,7 @@ export const useAiSuggestions = (): UseAiSuggestionsReturn => {
                         suggestionType: type,
                     }
 
-                    const response = await fetch("/api/code-suggestions", {
+                    const response = await fetch("/api/code-completion", {
                         method: "POST",
                         headers: {
                             "Content-type": "application/json",
@@ -79,6 +79,7 @@ export const useAiSuggestions = (): UseAiSuggestionsReturn => {
                     const data = await response.json();
 
                     if (data.suggestion) {
+                        console.log("suggestion received : ", data)
                         const suggestionText = data.suggestion.trim();
                         setState((prev) => ({
                             ...prev,

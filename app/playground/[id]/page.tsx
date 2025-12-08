@@ -24,6 +24,7 @@ import { findFilePath } from '@/modules/playground/lib';
 import { toast } from 'sonner';
 import { writeSync } from 'fs';
 import ToggleAI from '@/modules/playground/components/toggle-ai';
+import { useAiSuggestions } from '@/modules/playground/hooks/useAiSuggestion';
 
 const MainPlaygroundPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -47,6 +48,8 @@ const MainPlaygroundPage = () => {
     } = useFileExplorer();
     // @ts-ignore
     const { serverUrl, isLoading: containerLoading, error: containerError, instance, writeFileSync, destroy } = UseWebContainer({ templateData })
+
+    const aiSuggestions = useAiSuggestions();
 
     const lastSyncedContent = useRef<Map<string, string>>(new Map());
 
@@ -359,15 +362,10 @@ const MainPlaygroundPage = () => {
                                     <TooltipContent>Save All (Ctrl+Shift+S)</TooltipContent>
                                 </Tooltip>
 
-                                {/* <ToggleAI
+                                <ToggleAI
                                     isEnabled={aiSuggestions.isEnabled}
                                     onToggle={aiSuggestions.toggleEnabled}
                                     suggestionLoading={aiSuggestions.isLoading}
-                                /> */}
-                                <ToggleAI
-                                    isEnabled={true}
-                                    onToggle={() => { }}
-                                    suggestionLoading={false}
                                 />
 
                                 <DropdownMenu>
@@ -451,9 +449,13 @@ const MainPlaygroundPage = () => {
                                                     activeFile={activeFile}
                                                     content={activeFile?.content || "no content"}
                                                     onContentChange={(value) => { activeFileId && updateFileContent(activeFileId, value) }}
-                                                >
-
-                                                </PlaygroundEditor>
+                                                    suggestion={aiSuggestions.suggestion}
+                                                    suggestionLoading={aiSuggestions.isLoading}
+                                                    suggestionPosition={aiSuggestions.position}
+                                                    onAcceptSuggestion={(editor, monaco) => aiSuggestions.acceptSuggestion(editor, monaco)}
+                                                    onTriggerSuggestion={(type, editor) => aiSuggestions.fetchSuggestion(type, editor)}
+                                                    onRejectSuggestion={(editor) => aiSuggestions.rejectSuggestion(editor)}
+                                                />
                                             </ResizablePanel>
                                             {
                                                 isPreviewVisible && (
@@ -495,7 +497,7 @@ const MainPlaygroundPage = () => {
                     </div>
                 </SidebarInset>
             </>
-        </TooltipProvider>
+        </TooltipProvider >
     )
 }
 
